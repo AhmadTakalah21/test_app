@@ -29,7 +29,7 @@ class MainTextField extends StatefulWidget {
     this.borderWidth = 1,
     this.outlineInputBorder,
     this.fillColor,
-    this.filled = true,
+    this.filled = false,
     this.onClearTap,
     this.showCloseIcon,
     this.title,
@@ -38,10 +38,10 @@ class MainTextField extends StatefulWidget {
     this.validator,
     this.maxLines,
     this.minLines = 1,
-    this.titleSize = 20,
+    this.titleSize = 15,
     this.titlePadding = AppConstants.padding0,
     this.titleHeight = 10,
-    this.titleColor = AppColors.mainColorSecondary,
+    this.titleColor = AppColors.blackShade,
   });
 
   final String? hintText;
@@ -113,12 +113,12 @@ class _MainTextFieldState extends State<MainTextField> {
               title,
               style: TextStyle(
                 fontSize: widget.titleSize,
-                fontWeight: FontWeight.w700,
+                height: 1.24,
                 color: widget.titleColor,
               ),
             ),
           ),
-        if (title != null) SizedBox(height: widget.titleHeight),
+        //if (title != null) SizedBox(height: widget.titleHeight),
         TextFormField(
           controller: _controller,
           obscureText: widget.obscureText,
@@ -137,7 +137,7 @@ class _MainTextFieldState extends State<MainTextField> {
           cursorColor: widget.textColor,
           style: TextStyle(color: widget.textColor),
           decoration: InputDecoration(
-            contentPadding: widget.padding ?? AppConstants.padding16,
+            contentPadding: widget.padding ?? AppConstants.padding8,
             labelText: widget.labelText,
             floatingLabelStyle: TextStyle(
               color: widget.errorText == null
@@ -158,23 +158,36 @@ class _MainTextFieldState extends State<MainTextField> {
                 ),
             errorStyle: const TextStyle(fontSize: 16, color: AppColors.red),
             errorText: widget.errorText,
-            border: widget.outlineInputBorder ?? outlineInputBorder(),
-            focusedBorder: widget.outlineInputBorder ?? outlineInputBorder(),
-            enabledBorder: widget.outlineInputBorder ?? outlineInputBorder(),
+            // border: widget.outlineInputBorder ?? outlineInputBorder(),
+            // focusedBorder: widget.outlineInputBorder ?? outlineInputBorder(),
+            // enabledBorder: widget.outlineInputBorder ?? outlineInputBorder(),
             suffixIcon: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (suffixIcon != null) suffixIcon,
                 if (_controller.text.isNotEmpty && showCloseIcon)
-                  InkWell(
-                    onTap: () {
-                      _controller.clear();
-                      widget.onChanged?.call("");
-                      widget.onClearTap?.call();
-                      setState(() {});
-                    },
-                    child: const Icon(Icons.close, color: AppColors.grey),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.greyShade3, width: 2),
+                    ),
+                    child: Padding(
+                      padding: AppConstants.padding4,
+                      child: InkWell(
+                        onTap: () {
+                          _controller.clear();
+                          widget.onChanged?.call("");
+                          widget.onClearTap?.call();
+                          setState(() {});
+                        },
+                        child: const Icon(
+                          Icons.close,
+                          color: AppColors.greyShade3,
+                          size: 15,
+                        ),
+                      ),
+                    ),
                   ),
                 if (!widget.readOnly &&
                     _controller.text.isNotEmpty &&
@@ -183,6 +196,7 @@ class _MainTextFieldState extends State<MainTextField> {
               ],
             ),
             prefixIcon: prefixIcon,
+            prefixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20),
             fillColor: widget.fillColor ?? AppColors.mainColorSecondary,
             filled: widget.filled,
           ),

@@ -1,4 +1,19 @@
 {
     "create_account": "أنشئ حسابك المجاني",
-    "start_journey" : "لنبدأ رحلة ممتعة سويا!"
+    "start_journey" : "لنبدأ رحلة ممتعة سويا!",
+    "stay_organized" : "ابقى منظما مع",
+    "continue_with_google" : "المتابعة عن طريق غوغل",
+    "or" : "أو",
+    "continue_with_email" : "المتابعة عن طريق الايميل",
+    "you_agree" : "بتسجيلك فإنك توافق على ",
+    "terms_privacy" : "شروط الخدمة وسياسة الخصوصية",
+    "enter_strong_pass" : "ادخل كلمة مرور قوية",
+    "your_work_email" : "بريد العمل الالكتروني الخاص بك",
+    "your_password" : "كلمة المرور الخاصة بك",
+    "confirm_password" : "تأكيد كبمة المرور",
+    "not_enought_strong" : "ليست قوية",
+    "strong_enought" : "قوية",
+    "pass_7_chars" : "كلمة المرور يجب أن تحتوي على 7 حروف على الأقل",
+    "pass_uppercase_a_to_z" : "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل ('A'-'Z').",
+    "create_workspace" : "إنشاء مساحة عمل"
 }

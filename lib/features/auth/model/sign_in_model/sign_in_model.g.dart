@@ -7,12 +7,12 @@ part of 'sign_in_model.dart';
 // **************************************************************************
 
 SignInModel _$SignInModelFromJson(Map<String, dynamic> json) => SignInModel(
-  id: (json['id'] as num).toInt(),
-  email: json['email'] as String,
-  token: json['token'] as String?,
-  name: json['name'] as String,
-  phone: json['phone'] as String?,
-);
+      id: (json['id'] as num).toInt(),
+      email: json['email'] as String,
+      token: json['token'] as String?,
+      name: json['name'] as String,
+      phone: json['phone'] as String?,
+    );
 
 Map<String, dynamic> _$SignInModelToJson(SignInModel instance) =>
     <String, dynamic>{

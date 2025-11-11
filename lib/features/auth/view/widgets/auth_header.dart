@@ -34,6 +34,7 @@ class AuthHeader extends StatelessWidget {
                 height: 1.22,
               ),
             ),
+            SizedBox(width: 5),
             SvgPicture.asset(AppConstants.wavingHandSvg, width: 22, height: 22),
           ],
         ),

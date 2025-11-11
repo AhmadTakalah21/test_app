@@ -3,6 +3,7 @@ import 'package:appointments_app/global/theme/theme_x.dart';
 import 'package:appointments_app/global/utils/app_colors.dart';
 import 'package:appointments_app/global/utils/constants.dart';
 import 'package:appointments_app/global/widgets/loading_indicator.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MainActionButton extends StatefulWidget {
   const MainActionButton({
@@ -25,6 +26,7 @@ class MainActionButton extends StatefulWidget {
     this.icon,
     this.isLoading = false,
     this.margin,
+    this.iconAsset,
   });
 
   final VoidCallback onPressed;
@@ -43,6 +45,7 @@ class MainActionButton extends StatefulWidget {
   final EdgeInsets? margin;
   final Widget? child;
   final Icon? icon;
+  final String? iconAsset;
   final bool isExpandText;
   final bool isLoading;
 
@@ -51,34 +54,35 @@ class MainActionButton extends StatefulWidget {
 }
 
 class _MainActionButtonState extends State<MainActionButton> {
-  late Widget textWidget = Text(
-    widget.text,
-    style: TextStyle(
-      color: widget.textColor ?? AppColors.mainColorSecondary,
-      height: 1.19,
-      fontSize: widget.fontSize ?? 20,
-      fontWeight: widget.fontWeight,
-    ),
-    textAlign: TextAlign.center,
-    overflow: TextOverflow.ellipsis,
-  );
-  late final buildText = widget.isExpandText
-      ? Expanded(child: textWidget)
-      : textWidget;
   @override
   Widget build(BuildContext context) {
+    Widget textWidget = Text(
+      widget.text,
+      style: TextStyle(
+        color: widget.textColor ?? AppColors.white,
+        height: 1.21,
+        fontSize: widget.fontSize ?? 15,
+        fontWeight: widget.fontWeight ?? FontWeight.w500,
+      ),
+      textAlign: TextAlign.center,
+      overflow: TextOverflow.ellipsis,
+    );
+    final buildText = widget.isExpandText
+        ? Expanded(child: textWidget)
+        : textWidget;
     final icon = widget.icon;
+    final iconAsset = widget.iconAsset;
     return InkWell(
       onTap: widget.isLoading ? null : widget.onPressed,
       child: Container(
         height: widget.height,
         width: widget.width,
         margin: widget.margin,
-        padding: widget.padding ?? AppConstants.paddingH36V8,
+        padding: widget.padding ?? AppConstants.padding16,
         decoration: BoxDecoration(
           border: widget.border,
           color: widget.buttonColor ?? context.cs.primary,
-          borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
+          borderRadius: widget.borderRadius ?? AppConstants.borderRadius16,
           boxShadow: widget.shadow,
         ),
         child: Center(
@@ -87,8 +91,11 @@ class _MainActionButtonState extends State<MainActionButton> {
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (icon != null) icon,
-                    if (icon != null) const SizedBox(width: 5),
+                    if (icon != null) ...[icon, const SizedBox(width: 5)],
+                    if (iconAsset != null) ...[
+                      SvgPicture.asset(iconAsset),
+                      const SizedBox(width: 5),
+                    ],
                     widget.child ?? buildText,
                   ],
                 ),

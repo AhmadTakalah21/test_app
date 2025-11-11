@@ -17,6 +17,7 @@ abstract class AppConstants {
   static const borderRadiusCircle = BorderRadius.all(Radius.circular(300));
   static const borderRadius30 = BorderRadius.all(Radius.circular(30));
   static const borderRadius20 = BorderRadius.all(Radius.circular(20));
+  static const borderRadius16 = BorderRadius.all(Radius.circular(16));
   static const borderRadius15 = BorderRadius.all(Radius.circular(15));
   static const borderRadius10 = BorderRadius.all(Radius.circular(10));
   static const borderRadius8 = BorderRadius.all(Radius.circular(8));
@@ -124,5 +125,10 @@ abstract class AppConstants {
 
   static const appLogo = "assets/images/app_logo.png";
   static const appLogoSvg = "assets/images/app_logo_svg.svg";
+  static const appLogoWithName = "assets/images/logo_with_name.png";
+  static const appLogoWithNameSvg = "assets/images/logo_with_name_svg.svg";
   static const wavingHandSvg = "assets/images/waving_hand.svg";
+  static const googleIconSvg = "assets/images/google_icon.svg";
+  static const emailIconSvg = "assets/images/email_icon.svg";
+  static const lockIconSvg = "assets/images/lock_icon.svg";
 }

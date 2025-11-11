@@ -1,8 +1,8 @@
+import 'package:appointments_app/global/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appointments_app/features/auth_manager/bloc/auth_manager_bloc.dart';
-import 'package:appointments_app/global/router/app_router.gr.dart';
 
 @RoutePage()
 class AuthManagerView extends StatefulWidget {

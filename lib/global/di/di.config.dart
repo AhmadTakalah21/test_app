@@ -1,5 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// dart format width=80
 
 // **************************************************************************
 // InjectableConfigGenerator
@@ -25,12 +24,16 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
-  // initializes the registration of main-scope dependencies inside of GetIt
+// initializes the registration of main-scope dependencies inside of GetIt
   Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) async {
-    final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final gh = _i526.GetItHelper(
+      this,
+      environment,
+      environmentFilter,
+    );
     final appModule = _$AppModule();
     await gh.factoryAsync<_i460.SharedPreferences>(
       () => appModule.prefs,
@@ -39,18 +42,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i816.AppManagerCubit>(() => _i816.AppManagerCubit());
     gh.singleton<_i144.AuthManagerBloc>(() => _i144.AuthManagerBloc());
     gh.singleton<_i813.DioClient>(() => _i813.DioClient());
-    await gh.singletonAsync<_i960.UserRepo>(() {
-      final i = _i960.UserRepo();
-      return i.init().then((_) => i);
-    }, preResolve: true);
+    await gh.singletonAsync<_i960.UserRepo>(
+      () {
+        final i = _i960.UserRepo();
+        return i.init().then((_) => i);
+      },
+      preResolve: true,
+    );
     gh.factory<_i181.ThemeCubit>(
-      () => _i181.ThemeCubit(gh<_i460.SharedPreferences>()),
-    );
+        () => _i181.ThemeCubit(gh<_i460.SharedPreferences>()));
     gh.factory<_i269.AuthService>(() => _i269.AuthServiceImp());
-    gh.factory<_i22.AuthCubit>(
-      () =>
-          _i22.AuthCubit(gh<_i269.AuthService>(), gh<_i144.AuthManagerBloc>()),
-    );
+    gh.factory<_i22.AuthCubit>(() => _i22.AuthCubit(
+          gh<_i269.AuthService>(),
+          gh<_i144.AuthManagerBloc>(),
+        ));
     return this;
   }
 }
