@@ -13,9 +13,11 @@
     "confirm_password" : "تأكيد كلمة المرور",
     "not_enought_strong" : "ليست قوية",
     "strong_enought" : "قوية",
-    "pass_7_chars" : "كلمة المرور يجب أن تحتوي على 7 حروف على الأقل",
+    "pass_x_chars" : "كلمة المرور يجب أن تحتوي على {} حروف على الأقل",
     "pass_uppercase_a_to_z" : "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل ('A'-'Z').",
-    "create_workspace" : "إنشاء مساحة عمل",
+    "pass_lowercase_a_to_z" : "كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل ('a'-'z').",
+    "pass_non_alphanumeric" : "كلمة المرور يجب أن تحتوي على محرف غير أبجدي واحد على الأقل ('/','-').",
+    "pass_digit" : "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل",
     "enter_company_name": "أدخل اسم شركتك",
     "lets_start_journey": "لنبدأ رحلة رائعة! 👋",
     "your_company_or_team": "اسم شركتك أو فريقك",
@@ -26,5 +28,8 @@
     "enter_last_name": "أدخل اسم العائلة",
     "create_workspace": "إنشاء مساحة العمل",
     "thank_you_title_line1": "شكرًا لاختيارك",
-    "thank_you_title_line2": "Workiom"
+    "thank_you_title_line2": "Workiom",
+    "sign_in" : "تسجيل الدخول",
+    "connection_out": "انتهت فترة الاتصال, يرجى التأكد من الاتصال بالانترنت ثم إعادة المحاولة",
+    "try_again": "إعادة المحاولة"
 }

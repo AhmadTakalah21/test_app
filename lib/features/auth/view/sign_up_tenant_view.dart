@@ -109,7 +109,7 @@ class _SignUpTenantPageState extends State<SignUpTenantPage>
 
             style: MainTextFieldStyle.none,
 
-            contentPadding: const EdgeInsets.only(top: 2, bottom: 2),
+            contentPadding: const EdgeInsets.only(top: 12),
 
             onChanged: (v) {
               final lower = v.toLowerCase();
@@ -163,7 +163,7 @@ class _SignUpTenantPageState extends State<SignUpTenantPage>
 
             style: MainTextFieldStyle.none,
 
-            contentPadding: const EdgeInsets.only(top: 2, bottom: 2),
+            contentPadding: const EdgeInsets.only(top: 12),
 
             hintStyle: TextStyle(
               color: AppColors.greyShade,

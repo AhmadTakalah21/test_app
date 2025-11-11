@@ -5,9 +5,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:appointments_app/global/dio/app_interceptor.dart';
 import 'package:appointments_app/global/utils/constants.dart';
 
-// const baseUrl = "https://298f-169-150-196-117.ngrok-free.app";
-//const baseUrl = "https://tsyrback.addresses.sy";
-const baseUrl = "http://192.168.1.39:8000";
+const baseUrl = "https://api.workiom.club";
+//const baseUrl = "http://192.168.1.39:8000";
 const apiUrl = '$baseUrl/api/';
 
 @singleton

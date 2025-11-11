@@ -27,6 +27,7 @@ class MainActionButton extends StatefulWidget {
     this.isLoading = false,
     this.margin,
     this.iconAsset,
+    this.enabled = true,
   });
 
   final VoidCallback onPressed;
@@ -48,6 +49,7 @@ class MainActionButton extends StatefulWidget {
   final String? iconAsset;
   final bool isExpandText;
   final bool isLoading;
+  final bool enabled;
 
   @override
   State<MainActionButton> createState() => _MainActionButtonState();
@@ -56,6 +58,9 @@ class MainActionButton extends StatefulWidget {
 class _MainActionButtonState extends State<MainActionButton> {
   @override
   Widget build(BuildContext context) {
+    final btnColor = widget.enabled
+        ? (widget.buttonColor ?? context.cs.primary)
+        : AppColors.mainColorSecondary;
     Widget textWidget = Text(
       widget.text,
       style: TextStyle(
@@ -73,7 +78,7 @@ class _MainActionButtonState extends State<MainActionButton> {
     final icon = widget.icon;
     final iconAsset = widget.iconAsset;
     return InkWell(
-      onTap: widget.isLoading ? null : widget.onPressed,
+      onTap: widget.isLoading || !widget.enabled ? null : widget.onPressed,
       child: Container(
         height: widget.height,
         width: widget.width,
@@ -81,7 +86,7 @@ class _MainActionButtonState extends State<MainActionButton> {
         padding: widget.padding ?? AppConstants.padding16,
         decoration: BoxDecoration(
           border: widget.border,
-          color: widget.buttonColor ?? context.cs.primary,
+          color: btnColor,
           borderRadius: widget.borderRadius ?? AppConstants.borderRadius16,
           boxShadow: widget.shadow,
         ),

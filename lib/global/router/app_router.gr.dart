@@ -30,7 +30,7 @@ abstract class _$AppRouter extends RootStackRouter {
     AuthRouter.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child:  AutoRouter(),
+        child: const AutoRouter(),
       );
     },
     SignUpMethodsRoute.name: (routeData) {
@@ -52,9 +52,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     SignUpWithEmailRoute.name: (routeData) {
+      final args = routeData.argsAs<SignUpWithEmailRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const SignUpWithEmailView(),
+        child: SignUpWithEmailView(
+          key: args.key,
+          authCubit: args.authCubit,
+        ),
       );
     },
   };
@@ -146,14 +150,38 @@ class SignUpTenantRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [SignUpWithEmailView]
-class SignUpWithEmailRoute extends PageRouteInfo<void> {
-  const SignUpWithEmailRoute({List<PageRouteInfo>? children})
-      : super(
+class SignUpWithEmailRoute extends PageRouteInfo<SignUpWithEmailRouteArgs> {
+  SignUpWithEmailRoute({
+    Key? key,
+    required AuthCubit authCubit,
+    List<PageRouteInfo>? children,
+  }) : super(
           SignUpWithEmailRoute.name,
+          args: SignUpWithEmailRouteArgs(
+            key: key,
+            authCubit: authCubit,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'SignUpWithEmailRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<SignUpWithEmailRouteArgs> page =
+      PageInfo<SignUpWithEmailRouteArgs>(name);
+}
+
+class SignUpWithEmailRouteArgs {
+  const SignUpWithEmailRouteArgs({
+    this.key,
+    required this.authCubit,
+  });
+
+  final Key? key;
+
+  final AuthCubit authCubit;
+
+  @override
+  String toString() {
+    return 'SignUpWithEmailRouteArgs{key: $key, authCubit: $authCubit}';
+  }
 }
