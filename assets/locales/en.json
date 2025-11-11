@@ -15,5 +15,16 @@
     "strong_enought" : "Strong enought",
     "pass_7_chars" : "Passwords must have at least 7 characters",
     "pass_uppercase_a_to_z" : "Passwords must have at least one uppercase ('A'-'Z').",
-    "create_workspace" : "Create Workspace"
+    "create_workspace" : "Create Workspace",
+    "enter_company_name": "Enter your company name",
+    "lets_start_journey": "Let's start an amazing journey! 👋",
+    "your_company_or_team": "Your  company or team name",
+    "workspace_name_star": "Workspace name*",
+    "your_first_name": "Your  first name",
+    "enter_first_name": "Enter your First name",
+    "your_last_name": "Your  last name",
+    "enter_last_name": "Enter your Last name",
+    "create_workspace": "Create Workspace",
+    "thank_you_title_line1": "Thank you for choosing",
+    "thank_you_title_line2": "Workiom"
 }

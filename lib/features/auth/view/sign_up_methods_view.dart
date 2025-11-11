@@ -13,6 +13,7 @@ abstract class SignUpMethodsViewCallBacks {
   void onContinueWithEmail();
   void onContinueWithGoogle();
   void onTermsOfServiceAndPrivacyPolicy();
+  void onSignInTap();
 }
 
 @RoutePage()
@@ -34,24 +35,81 @@ class SignUpMethodsPage extends StatefulWidget {
 
 class _SignUpMethodsPageState extends State<SignUpMethodsPage>
     implements SignUpMethodsViewCallBacks {
-
   @override
   void onContinueWithEmail() => context.router.push(SignUpWithEmailRoute());
 
   @override
-  void onContinueWithGoogle() {
-    // TODO: implement onContinueWithGoogle
-  }
+  void onContinueWithGoogle() {}
 
   @override
   void onTermsOfServiceAndPrivacyPolicy() {
-    // TODO: implement onTermsOfServiceAndPrivacyPolicy
+    // TODO: افتح صفحة الشروط والخصوصية لاحقًا
+  }
+
+  @override
+  void onSignInTap() {
+    // TODO: اربط Route تسجيل الدخول لاحقًا (مثال): context.router.replace(const SignInRoute());
+    context.router.maybePop();
+  }
+
+  String _currentLangLabel(BuildContext context) {
+    final code = context.locale.languageCode;
+    return code == 'ar' ? 'العربية' : 'English';
+  }
+
+  Future<void> _setLocale(Locale locale) async {
+    if (context.locale == locale) return;
+    await context.setLocale(locale);
+    if (mounted) setState(() {});
+  }
+
+  Widget _buildLanguageInlineSelector() {
+    return Padding(
+      padding: AppConstants.paddingH30,
+      child: Center(
+        child: _LanguageSelector(
+          label: _currentLangLabel(context),
+          onSelectEnglish: () => _setLocale(const Locale('en')),
+          onSelectArabic: () => _setLocale(const Locale('ar')),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        toolbarHeight: 48,
+        leadingWidth: 140,
+        leading: InkWell(
+          borderRadius: AppConstants.borderRadius30,
+          onTap: onSignInTap,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: const [
+              SizedBox(width: 8),
+              Icon(
+                Icons.arrow_back_ios_new,
+                color: AppColors.mainColor,
+                size: 20,
+              ),
+              SizedBox(width: 2),
+              Text(
+                'Sign in',
+                style: TextStyle(
+                  color: AppColors.mainColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  height: 1.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: SafeArea(
         top: false,
         child: Padding(
@@ -60,7 +118,8 @@ class _SignUpMethodsPageState extends State<SignUpMethodsPage>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AuthHeader(title: "create_account".tr()),
-              Spacer(),
+              const Spacer(),
+
               MainActionButton(
                 onPressed: onContinueWithGoogle,
                 buttonColor: AppColors.greyShade2,
@@ -68,21 +127,27 @@ class _SignUpMethodsPageState extends State<SignUpMethodsPage>
                 text: "continue_with_google".tr(),
                 iconAsset: AppConstants.googleIconSvg,
               ),
-              SizedBox(height: 30),
+
+              const SizedBox(height: 24),
+
               Text(
                 "or".tr(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.greyShade,
                   fontSize: 12,
                   height: 1.16,
                 ),
               ),
-              SizedBox(height: 30),
+
+              const SizedBox(height: 24),
+
               MainActionButton(
                 onPressed: onContinueWithEmail,
                 text: "continue_with_email".tr(),
               ),
-              SizedBox(height: 20),
+
+              const SizedBox(height: 16),
+
               Padding(
                 padding: AppConstants.paddingH30,
                 child: Text.rich(
@@ -91,27 +156,105 @@ class _SignUpMethodsPageState extends State<SignUpMethodsPage>
                     children: [
                       TextSpan(
                         text: "terms_privacy".tr(),
-                        style: TextStyle(decoration: TextDecoration.underline),
+                        style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                        ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = onTermsOfServiceAndPrivacyPolicy,
                       ),
                     ],
                   ),
                   textAlign: TextAlign.center,
-                  strutStyle: StrutStyle(height: 1.2),
-                  style: TextStyle(
+                  strutStyle: const StrutStyle(height: 1.2),
+                  style: const TextStyle(
                     color: AppColors.greyShade,
                     fontSize: 13,
                     height: 1.18,
                   ),
                 ),
               ),
-              Spacer(),
-              AuthTail(),
-              SizedBox(height: 20),
+
+              const Spacer(),
+
+              _buildLanguageInlineSelector(),
+
+              const SizedBox(height: 20),
+
+              const AuthTail(),
+              const SizedBox(height: 20),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _LanguageSelector extends StatelessWidget {
+  const _LanguageSelector({
+    required this.label,
+    required this.onSelectEnglish,
+    required this.onSelectArabic,
+  });
+
+  final String label;
+  final VoidCallback onSelectEnglish;
+  final VoidCallback onSelectArabic;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      tooltip: '',
+      position: PopupMenuPosition.over,
+      offset: const Offset(0, -4),
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onSelected: (value) {
+        if (value == 'en') onSelectEnglish();
+        if (value == 'ar') onSelectArabic();
+      },
+      itemBuilder: (ctx) => [
+        PopupMenuItem(
+          value: 'en',
+          child: Row(
+            children: const [
+              Icon(Icons.language, size: 18),
+              SizedBox(width: 8),
+              Text('English', style: TextStyle(fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'ar',
+          child: Row(
+            children: const [
+              Icon(Icons.language, size: 18),
+              SizedBox(width: 8),
+              Text('العربية', style: TextStyle(fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ),
+      ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.language, color: AppColors.blackShade, size: 18),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.blackShade,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Icon(
+            Icons.keyboard_arrow_down,
+            color: AppColors.blackShade,
+            size: 18,
+          ),
+        ],
       ),
     );
   }

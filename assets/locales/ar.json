@@ -10,10 +10,21 @@
     "enter_strong_pass" : "ادخل كلمة مرور قوية",
     "your_work_email" : "بريد العمل الالكتروني الخاص بك",
     "your_password" : "كلمة المرور الخاصة بك",
-    "confirm_password" : "تأكيد كبمة المرور",
+    "confirm_password" : "تأكيد كلمة المرور",
     "not_enought_strong" : "ليست قوية",
     "strong_enought" : "قوية",
     "pass_7_chars" : "كلمة المرور يجب أن تحتوي على 7 حروف على الأقل",
     "pass_uppercase_a_to_z" : "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل ('A'-'Z').",
-    "create_workspace" : "إنشاء مساحة عمل"
+    "create_workspace" : "إنشاء مساحة عمل",
+    "enter_company_name": "أدخل اسم شركتك",
+    "lets_start_journey": "لنبدأ رحلة رائعة! 👋",
+    "your_company_or_team": "اسم شركتك أو فريقك",
+    "workspace_name_star": "اسم مساحة العمل*",
+    "your_first_name": "اسمك الأول",
+    "enter_first_name": "أدخل اسمك الأول",
+    "your_last_name": "اسم العائلة",
+    "enter_last_name": "أدخل اسم العائلة",
+    "create_workspace": "إنشاء مساحة العمل",
+    "thank_you_title_line1": "شكرًا لاختيارك",
+    "thank_you_title_line2": "Workiom"
 }

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:appointments_app/global/utils/app_colors.dart';
 import 'package:appointments_app/global/utils/constants.dart';
 
+enum MainTextFieldStyle { outline, underline, none }
+
 class MainTextField extends StatefulWidget {
   const MainTextField({
     super.key,
@@ -11,11 +13,13 @@ class MainTextField extends StatefulWidget {
     this.focusNode,
     this.labelText,
     this.textInputType,
+    this.textInputAction,
     this.hintText,
     this.inputFormatters,
     this.initialText,
     this.errorText,
     this.padding,
+    this.contentPadding,
     this.readOnly = false,
     this.onTap,
     this.suffixIcon,
@@ -42,6 +46,10 @@ class MainTextField extends StatefulWidget {
     this.titlePadding = AppConstants.padding0,
     this.titleHeight = 10,
     this.titleColor = AppColors.blackShade,
+    this.style = MainTextFieldStyle.outline,
+    this.isDense = true,
+    this.enableInteractiveSelection = true,
+    this.prefixIconMax = 20,
   });
 
   final String? hintText;
@@ -52,14 +60,21 @@ class MainTextField extends StatefulWidget {
   final VoidCallback? onTap;
   final FocusNode? focusNode;
   final TextInputType? textInputType;
+  final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
   final String? errorText;
-  final EdgeInsets? padding;
   final String? labelText;
   final bool readOnly;
+  final bool obscureText;
+  final bool? filled;
+  final bool? showCloseIcon;
+  final bool isDense;
+  final bool enableInteractiveSelection;
+
+  final EdgeInsets? padding;
+  final EdgeInsets? contentPadding;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
-  final bool obscureText;
   final TextEditingController? controller;
   final Color textColor;
   final Color? floatingLabelColor;
@@ -70,12 +85,15 @@ class MainTextField extends StatefulWidget {
   final Color? hintColor;
   final BorderRadius? borderRadius;
   final InputBorder? outlineInputBorder;
-  final bool? filled;
+  final MainTextFieldStyle style;
+  final double prefixIconMax;
+
   final VoidCallback? onClearTap;
-  final bool? showCloseIcon;
   final String? Function(String?)? validator;
   final int? maxLines;
   final int? minLines;
+
+  // Title line
   final double titleSize;
   final EdgeInsets titlePadding;
   final double titleHeight;
@@ -86,22 +104,79 @@ class MainTextField extends StatefulWidget {
 }
 
 class _MainTextFieldState extends State<MainTextField> {
-  late Color? floatingLabelColor = widget.floatingLabelColor;
-  late TextEditingController _controller;
+  late final bool _ownsController;
+  late final TextEditingController _controller;
+  late Color? _floatingLabelColor = widget.floatingLabelColor;
 
   @override
   void initState() {
     super.initState();
+    _ownsController = widget.controller == null;
     _controller =
         widget.controller ?? TextEditingController(text: widget.initialText);
   }
 
   @override
+  void dispose() {
+    if (_ownsController) _controller.dispose();
+    super.dispose();
+  }
+
+  InputBorder _buildEnabledBorder() {
+    switch (widget.style) {
+      case MainTextFieldStyle.none:
+        return InputBorder.none;
+      case MainTextFieldStyle.underline:
+        return UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: widget.borderColor,
+            width: widget.borderWidth,
+          ),
+        );
+      case MainTextFieldStyle.outline:
+        return OutlineInputBorder(
+          borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
+          borderSide: BorderSide(
+            color: widget.borderColor,
+            width: widget.borderWidth,
+          ),
+        );
+    }
+  }
+
+  InputBorder _buildFocusedBorder() {
+    final focusedColor = widget.borderColor;
+    switch (widget.style) {
+      case MainTextFieldStyle.none:
+        return InputBorder.none;
+      case MainTextFieldStyle.underline:
+        return UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: focusedColor,
+            width: widget.borderWidth + 0.2,
+          ),
+        );
+      case MainTextFieldStyle.outline:
+        return OutlineInputBorder(
+          borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
+          borderSide: BorderSide(
+            color: focusedColor,
+            width: widget.borderWidth + 0.2,
+          ),
+        );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final suffixIcon = widget.suffixIcon;
-    final prefixIcon = widget.prefixIcon;
-    final showCloseIcon = widget.showCloseIcon ?? true;
+    final suffix = widget.suffixIcon;
+    final prefix = widget.prefixIcon;
+    final showClose = widget.showCloseIcon ?? true;
     final title = widget.title;
+
+    final EdgeInsets contentPadding =
+        widget.contentPadding ?? widget.padding ?? AppConstants.padding8;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +193,6 @@ class _MainTextFieldState extends State<MainTextField> {
               ),
             ),
           ),
-        //if (title != null) SizedBox(height: widget.titleHeight),
         TextFormField(
           controller: _controller,
           obscureText: widget.obscureText,
@@ -133,15 +207,18 @@ class _MainTextFieldState extends State<MainTextField> {
           onFieldSubmitted: widget.onSubmitted,
           focusNode: widget.focusNode,
           keyboardType: widget.textInputType ?? TextInputType.name,
+          textInputAction: widget.textInputAction,
           inputFormatters: widget.inputFormatters,
           cursorColor: widget.textColor,
           style: TextStyle(color: widget.textColor),
+          enableInteractiveSelection: widget.enableInteractiveSelection,
           decoration: InputDecoration(
-            contentPadding: widget.padding ?? AppConstants.padding8,
+            isDense: widget.isDense,
+            contentPadding: contentPadding,
             labelText: widget.labelText,
             floatingLabelStyle: TextStyle(
               color: widget.errorText == null
-                  ? floatingLabelColor ?? AppColors.black
+                  ? _floatingLabelColor ?? AppColors.black
                   : AppColors.red,
             ),
             labelStyle: TextStyle(
@@ -158,15 +235,19 @@ class _MainTextFieldState extends State<MainTextField> {
                 ),
             errorStyle: const TextStyle(fontSize: 16, color: AppColors.red),
             errorText: widget.errorText,
-            // border: widget.outlineInputBorder ?? outlineInputBorder(),
-            // focusedBorder: widget.outlineInputBorder ?? outlineInputBorder(),
-            // enabledBorder: widget.outlineInputBorder ?? outlineInputBorder(),
+
+            border: widget.outlineInputBorder ?? _buildEnabledBorder(),
+            enabledBorder: widget.outlineInputBorder ?? _buildEnabledBorder(),
+            focusedBorder: widget.outlineInputBorder ?? _buildFocusedBorder(),
+
             suffixIcon: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (suffixIcon != null) suffixIcon,
-                if (_controller.text.isNotEmpty && showCloseIcon)
+                if (suffix != null) suffix,
+                if (!widget.readOnly &&
+                    _controller.text.isNotEmpty &&
+                    showClose)
                   DecoratedBox(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -191,28 +272,23 @@ class _MainTextFieldState extends State<MainTextField> {
                   ),
                 if (!widget.readOnly &&
                     _controller.text.isNotEmpty &&
-                    showCloseIcon)
+                    showClose)
                   const SizedBox(width: 10),
               ],
             ),
-            prefixIcon: prefixIcon,
-            prefixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20),
+
+            prefixIcon: prefix,
+            prefixIconConstraints: BoxConstraints(
+              maxWidth: widget.prefixIconMax,
+              maxHeight: widget.prefixIconMax,
+            ),
+
             fillColor: widget.fillColor ?? AppColors.mainColorSecondary,
             filled: widget.filled,
           ),
           validator: widget.validator,
         ),
       ],
-    );
-  }
-
-  OutlineInputBorder outlineInputBorder() {
-    return OutlineInputBorder(
-      borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
-      borderSide: BorderSide(
-        color: widget.borderColor,
-        width: widget.borderWidth,
-      ),
     );
   }
 }
