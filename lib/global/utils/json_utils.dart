@@ -41,6 +41,10 @@ abstract class JsonUtils {
     return json.toString();
   }
 
+  static bool setIsTenantAvailable(Map<String, dynamic> json) {
+    return json['tenantId'] == null;
+  }
+
   // static MultipartFile fileToJson(String path) {
   //   return MultipartFile.fromFileSync(path, filename: basename(path));
   // }

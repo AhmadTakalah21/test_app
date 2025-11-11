@@ -10,16 +10,16 @@ abstract class SupportedLocales {
   ];
 
   static final List<LanguageModel> languages = [
-    const LanguageModel(english,"EN"),
-    const LanguageModel(arabic,"AR"),
+    const LanguageModel(english,"English"),
+    const LanguageModel(arabic,"العربية"),
   ];
 
   static const String path = 'assets/locales';
 }
 
 class LanguageModel {
-  const LanguageModel(this.locale, this.code);
+  const LanguageModel(this.locale, this.label);
 
   final Locale locale;
-  final String code;
+  final String label;
 }

@@ -4,6 +4,7 @@ import 'package:appointments_app/global/utils/constants.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 @RoutePage()
 class SignUpSuccessView extends StatelessWidget {
@@ -31,37 +32,44 @@ class _SignUpSuccessPageState extends State<SignUpSuccessPage> {
           padding: AppConstants.padding16,
           child: Column(
             children: [
-              Expanded(
-                child: Center(
-                  child: Text.rich(
+              Spacer(),
+              Text.rich(
+                TextSpan(
+                  children: [
                     TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "${'thank_you_title_line1'.tr()}\n",
-                          style: const TextStyle(
-                            color: AppColors.blackShade,
-                            fontSize: _titleSize,
-                            height: 1.25,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        TextSpan(
-                          text: "thank_you_title_line2".tr(),
-
-                          style: const TextStyle(
-                            color: AppColors.blackShade,
-                            fontSize: _titleSize,
-                            height: 1.25,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
+                      text: "${'thank_you_title_line1'.tr()}\n",
+                      style: const TextStyle(
+                        color: AppColors.blackShade,
+                        fontSize: _titleSize,
+                        height: 1.25,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-
-                    textAlign: TextAlign.center,
-                  ),
+                    WidgetSpan(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "thank_you_title_line2".tr(),
+                            style: const TextStyle(
+                              color: AppColors.blackShade,
+                              fontSize: _titleSize,
+                              height: 1.25,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          SvgPicture.asset(AppConstants.appLogoSvg),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
+
+                textAlign: TextAlign.center,
               ),
+              Spacer(),
 
               const Align(alignment: Alignment.center, child: AuthTail()),
               const SizedBox(height: 20),

@@ -225,7 +225,7 @@ class _MainTextFieldState extends State<MainTextField> {
               color: widget.errorText == null ? AppColors.grey : AppColors.red,
               fontSize: 14,
             ),
-            alignLabelWithHint: true,
+            //alignLabelWithHint: true,
             hintText: widget.hintText,
             hintStyle:
                 widget.hintStyle ??

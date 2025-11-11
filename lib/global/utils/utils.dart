@@ -83,6 +83,52 @@ abstract class Utils {
     }
     return null;
   }
+
+  static String? validatePassword(
+    String password, {
+    required bool requireDigit,
+    required bool requireLowercase,
+    required bool requireNonAlphanumeric,
+    required bool requireUppercase,
+    required int requiredLength,
+  }) {
+    if (password.length < requiredLength) {
+      return 'Password must be at least $requiredLength characters long';
+    }
+
+    if (requireDigit && !RegExp(r'\d').hasMatch(password)) {
+      return 'Password must contain at least one digit';
+    }
+
+    if (requireLowercase && !RegExp(r'[a-z]').hasMatch(password)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+
+    if (requireUppercase && !RegExp(r'[A-Z]').hasMatch(password)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+
+    if (requireNonAlphanumeric && !RegExp(r'[^a-zA-Z0-9]').hasMatch(password)) {
+      return 'Password must contain at least one special character';
+    }
+
+    return null;
+  }
+
+  static bool validateLenght(String password, int requiredLength) =>
+      password.length >= requiredLength;
+
+  static bool validateDigits(String password) =>
+      RegExp(r'\d').hasMatch(password);
+
+  static bool validateLowerCase(String password) =>
+      RegExp(r'[a-z]').hasMatch(password);
+
+  static bool validateUpperCase(String password) =>
+      RegExp(r'[A-Z]').hasMatch(password);
+
+  static bool validateNonAlphanumeric(String password) =>
+      RegExp(r'[^a-zA-Z0-9]').hasMatch(password);
 }
 
 enum InputTextType { email, phone, password, none }

@@ -4,6 +4,90 @@ part of 'auth_service.dart';
 class AuthServiceImp implements AuthService {
   final dio = DioClient();
 
+  @override
+  Future<ResponseModel<LoginInfoResultModel>> getCurrentLoginInfo() async {
+    try {
+      final endpoint = "/services/app/Session/GetCurrentLoginInformations";
+      final response = await dio.get(endpoint);
+      final data = response.data as Map<String, dynamic>;
+      fromJsonT(json) =>
+          LoginInfoResultModel.fromJson(json as Map<String, dynamic>);
+      return ResponseModel.fromJson(data, fromJsonT);
+    } catch (e, stackTrace) {
+      if (kDebugMode) print("stackTrace of curr info login : $stackTrace");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResponseModel<EditionsForSelectModel>> getEditionsForSelect() async {
+    try {
+      final endpoint = "/services/app/TenantRegistration/GetEditionsForSelect";
+      final response = await dio.get(endpoint);
+      final data = response.data as Map<String, dynamic>;
+      fromJsonT(json) =>
+          EditionsForSelectModel.fromJson(json as Map<String, dynamic>);
+      return ResponseModel.fromJson(data, fromJsonT);
+    } catch (e, stackTrace) {
+      if (kDebugMode) print("stackTrace of getEditionsForSelect : $stackTrace");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResponseModel<PasswordStrengthModel>> getPasswordComplexity() async {
+    try {
+      final endpoint = "/services/app/Profile/GetPasswordComplexitySetting";
+      final response = await dio.get(endpoint);
+      final data = response.data as Map<String, dynamic>;
+      fromJsonT(json) => PasswordStrengthModel.fromJson(
+        json["setting"] as Map<String, dynamic>,
+      );
+      return ResponseModel.fromJson(data, fromJsonT);
+    } catch (e, stackTrace) {
+      if (kDebugMode) print("stackTrace of getPassComplexity : $stackTrace");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResponseModel<TenantAvailabilityModel>> checkTenantAvailability(
+    String name,
+  ) async {
+    try {
+      final endpoint = "/services/app/Account/IsTenantAvailable";
+      final data = {"tenancyName": name};
+      final response = await dio.post(endpoint, data: data);
+      final json = response.data as Map<String, dynamic>;
+      fromJsonT(json) =>
+          TenantAvailabilityModel.fromJson(json as Map<String, dynamic>);
+      return ResponseModel.fromJson(json, fromJsonT);
+    } catch (e, stackTrace) {
+      if (kDebugMode) print("stackTrace of TenantAvailability : $stackTrace");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResponseModel<RegisterResultModel>> register(
+    RegisterModel model, {
+    String? timeZone,
+  }) async {
+    try {
+      final endpoint = "/services/app/TenantRegistration/RegisterTenant";
+      final data = model.toJson();
+      final queries = {if (timeZone != null) "timeZone": timeZone};
+      final response = await dio.post(endpoint, data: data, queries: queries);
+      final json = response.data as Map<String, dynamic>;
+      fromJsonT(json) =>
+          RegisterResultModel.fromJson(json as Map<String, dynamic>);
+      return ResponseModel.fromJson(json, fromJsonT);
+    } catch (e, stackTrace) {
+      if (kDebugMode) print("stackTrace of getPassComplexity : $stackTrace");
+      rethrow;
+    }
+  }
+
   // @override
   // Future<SignInModel> signIn(String email, String password, String? fcmToken, {String? code}) async {
   //   try {
@@ -54,8 +138,6 @@ class AuthServiceImp implements AuthService {
   //   }
   // }
 
-
-
   // @override
   // Future<void> requestPasswordReset({required String email}) async {
   //   try {
@@ -65,7 +147,6 @@ class AuthServiceImp implements AuthService {
   //     rethrow;
   //   }
   // }
-
 
   // @override
   // Future<void> verifyPasswordResetCode({required String email, required String code}) async {
@@ -79,7 +160,6 @@ class AuthServiceImp implements AuthService {
   //     rethrow;
   //   }
   // }
-
 
   // @override
   // Future<void> resetPassword({
@@ -101,4 +181,3 @@ class AuthServiceImp implements AuthService {
   //   }
   // }
 }
-
