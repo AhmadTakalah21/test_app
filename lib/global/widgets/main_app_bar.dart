@@ -1,6 +1,7 @@
 import 'package:appointments_app/global/utils/app_colors.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   const MainAppBar({
@@ -26,45 +27,61 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<MainAppBar> createState() => _MainAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(60);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class _MainAppBarState extends State<MainAppBar> {
-  void onBackTap() => context.router.maybePop();
+  void _defaultBack() => context.router.maybePop();
 
   @override
   Widget build(BuildContext context) {
     final title = widget.title;
+
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.transparent,
-      toolbarHeight: 48,
+      surfaceTintColor: Colors.transparent,
+      centerTitle: widget.centerTitle,
+      automaticallyImplyLeading: false,
+      bottom: widget.bottom,
+
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+
       leadingWidth: 140,
       leading: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           InkWell(
-            onTap: widget.onBack ?? onBackTap,
-            child: const Icon(
-              Icons.arrow_back_ios_new,
-              color: AppColors.mainColor,
+            borderRadius: BorderRadius.circular(24),
+            onTap: widget.onBack ?? _defaultBack,
+            child: const Padding(
+              padding: EdgeInsets.all(6.0),
+              child: Icon(Icons.arrow_back_ios_new, color: AppColors.mainColor),
             ),
           ),
           if (title != null) ...[
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.mainColor,
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
                 height: 1.0,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ],
       ),
+
+      title: null,
+      actions: widget.actions,
     );
   }
 }

@@ -44,17 +44,8 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage>
   late final AuthCubit authCubit = context.read();
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
-  bool isObsecurePassword = true;
 
-  @override
-  void initState() {
-    super.initState();
-    emailController = TextEditingController();
-    emailController.addListener(_onEmailChanged);
-    passwordController = TextEditingController();
-    passwordController.addListener(_onPasswordChanged);
-    authCubit.getPasswordComplexity();
-  }
+  bool isObsecurePassword = true;
 
   double passwordStrength = 0;
   bool isPasswordValid = false;
@@ -66,56 +57,68 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage>
   bool isValidDigit = false;
   bool isValidNonAlphanumeric = false;
 
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController()..addListener(_onEmailChanged);
+    passwordController = TextEditingController()..addListener(_onPasswordChanged);
+    authCubit.getPasswordComplexity();
+  }
+
+  @override
+  void dispose() {
+    emailController.removeListener(_onEmailChanged);
+    passwordController.removeListener(_onPasswordChanged);
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   void _onEmailChanged() {
     final email = emailController.text;
+    if (!mounted) return;
     setState(() {
       isEmailValid = Utils.validateInput(email, InputTextType.email) == null;
     });
+    authCubit.setAdminEmail(email);
   }
 
   void _onPasswordChanged() {
+    if (!mounted) return;
     final password = passwordController.text;
-    if (authCubit.state is PasswordComplexitySuccess) {
-      final passStrength =
-          (authCubit.state as PasswordComplexitySuccess).passStrength;
 
-      final checks = [
-        Utils.validateLenght(password, passStrength.requiredLength),
-        if (passStrength.requireDigit) Utils.validateDigits(password),
-        if (passStrength.requireLowercase) Utils.validateLowerCase(password),
-        if (passStrength.requireUppercase) Utils.validateUpperCase(password),
-        if (passStrength.requireNonAlphanumeric)
-          Utils.validateNonAlphanumeric(password),
-      ];
+    if (authCubit.state is! PasswordComplexitySuccess) return;
+    final passStrength =
+        (authCubit.state as PasswordComplexitySuccess).passStrength;
 
-      final validCount = checks.where((e) => e).length;
-      final totalCount = checks.length;
+    final checks = <bool>[
+      Utils.validateLenght(password, passStrength.requiredLength),
+      if (passStrength.requireDigit) Utils.validateDigits(password),
+      if (passStrength.requireLowercase) Utils.validateLowerCase(password),
+      if (passStrength.requireUppercase) Utils.validateUpperCase(password),
+      if (passStrength.requireNonAlphanumeric)
+        Utils.validateNonAlphanumeric(password),
+    ];
 
-      setState(() {
-        isValidLength = Utils.validateLenght(
-          password,
-          passStrength.requiredLength,
-        );
+    final validCount = checks.where((e) => e).length;
+    final totalCount = checks.length;
 
-        isValidDigit =
-            (passStrength.requireDigit && Utils.validateDigits(password));
+    setState(() {
+      isValidLength = Utils.validateLenght(password, passStrength.requiredLength);
+      isValidDigit =
+          passStrength.requireDigit && Utils.validateDigits(password);
+      isValidLowerCase =
+          passStrength.requireLowercase && Utils.validateLowerCase(password);
+      isValidUpperCase =
+          passStrength.requireUppercase && Utils.validateUpperCase(password);
+      isValidNonAlphanumeric = passStrength.requireNonAlphanumeric &&
+          Utils.validateNonAlphanumeric(password);
 
-        isValidLowerCase =
-            (passStrength.requireLowercase &&
-            Utils.validateLowerCase(password));
+      passwordStrength = totalCount == 0 ? 0 : validCount / totalCount;
+      isPasswordValid = validCount == totalCount && totalCount > 0;
+    });
 
-        isValidUpperCase =
-            (passStrength.requireUppercase &&
-            Utils.validateUpperCase(password));
-
-        isValidNonAlphanumeric =
-            (passStrength.requireNonAlphanumeric &&
-            Utils.validateNonAlphanumeric(password));
-
-        passwordStrength = validCount / totalCount;
-        isPasswordValid = validCount == totalCount;
-      });
-    }
+    authCubit.setAdminPassword(password);
   }
 
   @override
@@ -126,38 +129,37 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage>
       setState(() => isObsecurePassword = !isObsecurePassword);
 
   @override
-  void onConfirmTap() => context.router.push(const SignUpTenantRoute());
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
+  void onConfirmTap() {
+    if (isPasswordValid && isEmailValid) {
+      context.router.push(SignUpTenantRoute(authCubit: authCubit));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final canSubmit = isPasswordValid && isEmailValid;
+
     return Scaffold(
-      appBar: MainAppBar(),
+      appBar: const MainAppBar(),
       body: SafeArea(
-        top: false,
+        top: true,
         child: Padding(
           padding: AppConstants.padding16,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AuthHeader(title: "enter_strong_pass".tr()),
-
               const Spacer(),
 
+              // Email
               MainTextField(
                 controller: emailController,
                 title: "your_work_email".tr(),
                 style: MainTextFieldStyle.underline,
                 contentPadding: const EdgeInsets.only(top: 12),
                 hintText: "email@gmail.com",
-                onChanged: authCubit.setAdminEmail,
                 textInputAction: TextInputAction.next,
+                textInputType: TextInputType.emailAddress,
                 prefixIcon: SvgPicture.asset(
                   AppConstants.emailIconSvg,
                   width: 16,
@@ -167,14 +169,15 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage>
 
               const SizedBox(height: 20),
 
+              // Password
               MainTextField(
                 controller: passwordController,
                 title: "your_password".tr(),
                 style: MainTextFieldStyle.underline,
                 contentPadding: const EdgeInsets.only(top: 12),
                 textInputAction: TextInputAction.done,
+                onSubmitted: (_) => onConfirmTap(),
                 obscureText: isObsecurePassword,
-                onChanged: authCubit.setAdminPassword,
                 hintText: "********",
                 maxLines: 1,
                 suffixIcon: IconButton(
@@ -198,41 +201,41 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage>
               PasswordStrengthBar(strength: passwordStrength),
 
               const SizedBox(height: 16),
+
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
                   if (state is PasswordComplexityLoading) {
-                    return LoadingIndicator();
+                    return const LoadingIndicator();
                   } else if (state is PasswordComplexitySuccess) {
-                    final passStrength = state.passStrength;
+                    final s = state.passStrength;
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildIconWithTitle(isPasswordValid),
                         const SizedBox(height: 5),
                         _buildIconWithText(
-                          "pass_x_chars".tr(
-                            args: [passStrength.requiredLength.toString()],
-                          ),
+                          "pass_x_chars".tr(args: [s.requiredLength.toString()]),
                           isValidLength,
                         ),
-                        if (passStrength.requireUppercase) ...[
+                        if (s.requireUppercase) ...[
                           const SizedBox(height: 5),
                           _buildIconWithText(
                             "pass_uppercase_a_to_z".tr(),
                             isValidUpperCase,
                           ),
                         ],
-                        if (passStrength.requireLowercase) ...[
+                        if (s.requireLowercase) ...[
                           const SizedBox(height: 5),
                           _buildIconWithText(
                             "pass_lowercase_a_to_z".tr(),
                             isValidLowerCase,
                           ),
                         ],
-                        if (passStrength.requireDigit) ...[
+                        if (s.requireDigit) ...[
                           const SizedBox(height: 5),
                           _buildIconWithText("pass_digit".tr(), isValidDigit),
                         ],
-                        if (passStrength.requireNonAlphanumeric) ...[
+                        if (s.requireNonAlphanumeric) ...[
                           const SizedBox(height: 5),
                           _buildIconWithText(
                             "pass_non_alphanumeric".tr(),
@@ -246,9 +249,8 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage>
                       error: state.error,
                       onTryAgainTap: onTryAgainTap,
                     );
-                  } else {
-                    return SizedBox.shrink();
                   }
+                  return const SizedBox.shrink();
                 },
               ),
 
@@ -257,7 +259,7 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage>
               MainActionButton(
                 onPressed: onConfirmTap,
                 text: "confirm_password".tr(),
-                enabled: isPasswordValid && isEmailValid,
+                enabled: canSubmit,
               ),
 
               const Spacer(),

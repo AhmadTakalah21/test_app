@@ -31,5 +31,8 @@
     "thank_you_title_line2": "Workiom",
     "sign_in" : "Sign In",
     "connection_out": "The connection has timed out, please check your internet connection then try again.",
-    "try_again": "Try Again"
+    "try_again": "Try Again",
+    "tenant_unavailable": "Workspace name is already taken.",
+    "something_went_wrong": "Something went wrong, please try again.",
+    "edition_id_required": "Edition is required."
 }

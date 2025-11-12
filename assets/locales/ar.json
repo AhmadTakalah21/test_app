@@ -31,5 +31,8 @@
     "thank_you_title_line2": "Workiom",
     "sign_in" : "تسجيل الدخول",
     "connection_out": "انتهت فترة الاتصال, يرجى التأكد من الاتصال بالانترنت ثم إعادة المحاولة",
-    "try_again": "إعادة المحاولة"
+    "try_again": "إعادة المحاولة",
+    "tenant_unavailable": "اسم مساحة العمل مستخدم بالفعل.",
+    "something_went_wrong": "حدث خطأ ما، يرجى المحاولة مرة أخرى.",
+    "edition_id_required": "يجب اختيار نوع الإصدار."
 }

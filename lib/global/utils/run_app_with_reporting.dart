@@ -16,9 +16,27 @@ Future<void> runAppWithReporting() async {
       await EasyLocalization.ensureInitialized();
 
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+      );
 
       Bloc.observer = AppBlocObserver();
-      runApp(const App());
+
+      runApp(
+        EasyLocalization(
+          supportedLocales: const [Locale('en'), Locale('ar')],
+          path: 'assets/locales',
+          fallbackLocale: const Locale('en'),
+          startLocale: const Locale('en'),
+          saveLocale: true,
+          child: const App(),
+        ),
+      );
     },
     (error, stackTrace) {
       debugPrint('runAppWithReporting error: $error');

@@ -11,7 +11,7 @@ part of 'app_router.dart';
 
 abstract class _$AppRouter extends RootStackRouter {
   // ignore: unused_element
-  _$AppRouter();
+  _$AppRouter({super.navigatorKey});
 
   @override
   final Map<String, PageFactory> pagesMap = {
@@ -46,9 +46,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     SignUpTenantRoute.name: (routeData) {
+      final args = routeData.argsAs<SignUpTenantRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const SignUpTenantView(),
+        child: SignUpTenantView(
+          key: args.key,
+          authCubit: args.authCubit,
+        ),
       );
     },
     SignUpWithEmailRoute.name: (routeData) {
@@ -136,16 +140,40 @@ class SignUpSuccessRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [SignUpTenantView]
-class SignUpTenantRoute extends PageRouteInfo<void> {
-  const SignUpTenantRoute({List<PageRouteInfo>? children})
-      : super(
+class SignUpTenantRoute extends PageRouteInfo<SignUpTenantRouteArgs> {
+  SignUpTenantRoute({
+    Key? key,
+    required AuthCubit authCubit,
+    List<PageRouteInfo>? children,
+  }) : super(
           SignUpTenantRoute.name,
+          args: SignUpTenantRouteArgs(
+            key: key,
+            authCubit: authCubit,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'SignUpTenantRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<SignUpTenantRouteArgs> page =
+      PageInfo<SignUpTenantRouteArgs>(name);
+}
+
+class SignUpTenantRouteArgs {
+  const SignUpTenantRouteArgs({
+    this.key,
+    required this.authCubit,
+  });
+
+  final Key? key;
+
+  final AuthCubit authCubit;
+
+  @override
+  String toString() {
+    return 'SignUpTenantRouteArgs{key: $key, authCubit: $authCubit}';
+  }
 }
 
 /// generated route for

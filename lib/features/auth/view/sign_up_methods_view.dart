@@ -91,7 +91,7 @@ class _SignUpMethodsPageState extends State<SignUpMethodsPage>
     return Scaffold(
       appBar: MainAppBar(onBack: onSignInTap, title: "sign_in".tr()),
       body: SafeArea(
-        top: false,
+        top: true,
         child: Padding(
           padding: AppConstants.padding16,
           child: Column(

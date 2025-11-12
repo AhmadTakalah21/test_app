@@ -16,10 +16,25 @@ class AppInterceptor extends Interceptor {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
+    final tenantId = prefs.getInt("abp_tenant_id");
+    final langCode = prefs.getString("lang_code");
+    final ianaTz = prefs.getString("iana_tz");
 
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
-      debugPrint('Bearer $token');
+      if (kDebugMode) debugPrint('Bearer $token');
+    }
+
+    if (tenantId != null) {
+      options.headers['Abp.TenantId'] = tenantId.toString();
+    }
+
+    if (langCode != null && langCode.isNotEmpty) {
+      options.headers['Accept-Language'] = langCode;
+    }
+
+    if (ianaTz != null && ianaTz.isNotEmpty) {
+      options.headers['IanaTimeZone'] = ianaTz;
     }
 
     return handler.next(options);
@@ -34,18 +49,31 @@ class AppInterceptor extends Interceptor {
       'Type: ${err.type}\n'
       'Response: ${err.response?.data}',
     );
+
     if (err.response?.statusCode == 401) {
       get<AuthManagerBloc>().add(SignOutRequested());
       throw UnauthorizedException(err.requestOptions);
     }
+
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout) {
       throw DeadlineExceededException(err.requestOptions);
     }
+
+    if (err.response?.statusCode == 400) {
+      throw BadRequestException(
+        requestOptions: err.requestOptions,
+        response: err.response,
+        message: err.message,
+      );
+    }
+
     throw CustomDioException(
       response: err.response,
       error: err.error,
       requestOptions: err.requestOptions,
+      type: err.type,
+      message: err.message,
     );
   }
 }
@@ -55,9 +83,7 @@ class UnauthorizedException extends DioException {
     : super(requestOptions: requestOptions);
 
   @override
-  String toString() {
-    return "unauthorized".tr();
-  }
+  String toString() => "unauthorized".tr();
 }
 
 class DeadlineExceededException extends DioException {
@@ -65,9 +91,7 @@ class DeadlineExceededException extends DioException {
     : super(requestOptions: requestOptions);
 
   @override
-  String toString() {
-    return "connection_out".tr();
-  }
+  String toString() => "connection_out".tr();
 }
 
 class BadRequestException extends DioException {
@@ -99,7 +123,7 @@ class CustomDioException extends DioException {
           response?.data ??
           error?.toString() ??
           "something_went_wrong".tr();
-    } catch (e) {
+    } catch (_) {
       return "something_went_wrong".tr();
     }
   }

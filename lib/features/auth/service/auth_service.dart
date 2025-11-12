@@ -11,27 +11,45 @@ import 'package:injectable/injectable.dart';
 
 part 'auth_service_imp.dart';
 
+class AuthResultModel {
+  AuthResultModel({
+    required this.accessToken,
+    required this.expireInSeconds,
+    this.encryptedAccessToken,
+    this.userId,
+  });
+
+  final String accessToken;
+  final int expireInSeconds;
+  final String? encryptedAccessToken;
+  final int? userId;
+
+  factory AuthResultModel.fromJson(Map<String, dynamic> json) {
+    return AuthResultModel(
+      accessToken: json['accessToken'] as String,
+      expireInSeconds: (json['expireInSeconds'] as num).toInt(),
+      encryptedAccessToken: json['encryptedAccessToken'] as String?,
+      userId: json['userId'] as int?,
+    );
+  }
+}
+
 abstract class AuthService {
   Future<ResponseModel<LoginInfoResultModel>> getCurrentLoginInfo();
   Future<ResponseModel<EditionsForSelectModel>> getEditionsForSelect();
   Future<ResponseModel<PasswordStrengthModel>> getPasswordComplexity();
-  Future<ResponseModel<TenantAvailabilityModel>> checkTenantAvailability(
-    String name,
-  );
+  Future<ResponseModel<TenantAvailabilityModel>> checkTenantAvailability(String name);
+
   Future<ResponseModel<RegisterResultModel>> register(
-    RegisterModel model, {
-    String? timeZone,
+      RegisterModel model, {
+        String? timeZone,
+      });
+
+  Future<ResponseModel<AuthResultModel>> authenticate({
+    required String tenantName,
+    required String emailOrUserName,
+    required String password,
+    required String ianaTimeZone,
+    bool rememberClient = false,
   });
-  // Future<SignInModel> signIn(String email, String password, String? fcmToken,
-  //     {String? code});
-  // Future<SignInModel> signUp(PostSignUpModel postSignUpModel);
-  // Future<void> logout();
-  // Future<void> requestPasswordReset({required String email});
-  // Future<void> verifyPasswordResetCode({required String email, required String code});
-  // Future<void> resetPassword({
-  //   required String email,
-  //   required String code,
-  //   required String password,
-  //   required String passwordConfirmation,
-  // });
 }
