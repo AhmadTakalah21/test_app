@@ -17,6 +17,7 @@ abstract class AppColors {
   static const greyShade = Color(0xFF555555);
   static const greyShade2 = Color(0xFFF4F4F4);
   static const greyShade3 = Color(0xFF747474);
+  static const greyShade4 = Color(0xFFD6D6D6);
 
   static List<BoxShadow> fisrtShadow = [
     BoxShadow(

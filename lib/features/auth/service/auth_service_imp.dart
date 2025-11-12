@@ -9,7 +9,8 @@ class AuthServiceImp implements AuthService {
     final endpoint = "/services/app/Session/GetCurrentLoginInformations";
     final response = await dio.get(endpoint);
     final data = response.data as Map<String, dynamic>;
-    fromJsonT(json) => LoginInfoResultModel.fromJson(json as Map<String, dynamic>);
+    fromJsonT(json) =>
+        LoginInfoResultModel.fromJson(json as Map<String, dynamic>);
     return ResponseModel.fromJson(data, fromJsonT);
   }
 
@@ -18,7 +19,8 @@ class AuthServiceImp implements AuthService {
     final endpoint = "/services/app/TenantRegistration/GetEditionsForSelect";
     final response = await dio.get(endpoint);
     final data = response.data as Map<String, dynamic>;
-    fromJsonT(json) => EditionsForSelectModel.fromJson(json as Map<String, dynamic>);
+    fromJsonT(json) =>
+        EditionsForSelectModel.fromJson(json as Map<String, dynamic>);
     return ResponseModel.fromJson(data, fromJsonT);
   }
 
@@ -35,25 +37,24 @@ class AuthServiceImp implements AuthService {
 
   @override
   Future<ResponseModel<TenantAvailabilityModel>> checkTenantAvailability(
-      String name,
-      ) async {
+    String name,
+  ) async {
     final endpoint = "/services/app/Account/IsTenantAvailable";
     final body = {"tenancyName": name.trim().toLowerCase()};
     final response = await dio.post(endpoint, data: body);
     final map = response.data as Map<String, dynamic>;
-    fromJsonT(json) => TenantAvailabilityModel.fromJson(json as Map<String, dynamic>);
+    fromJsonT(json) =>
+        TenantAvailabilityModel.fromJson(json as Map<String, dynamic>);
     final result = ResponseModel.fromJson(map, fromJsonT);
-
-
 
     return result;
   }
 
   @override
   Future<ResponseModel<RegisterResultModel>> register(
-      RegisterModel model, {
-        String? timeZone,
-      }) async {
+    RegisterModel model, {
+    String? timeZone,
+  }) async {
     const endpoint = "/services/app/TenantRegistration/RegisterTenant";
 
     final normalized = model.tenancyName.trim().toLowerCase();
@@ -64,7 +65,9 @@ class AuthServiceImp implements AuthService {
     await dio.setTenantId(null);
 
     final Map<String, dynamic>? queries =
-    (timeZone != null && timeZone.isNotEmpty) ? {"timeZone": timeZone} : null;
+        (timeZone != null && timeZone.isNotEmpty)
+        ? {"timeZone": timeZone}
+        : null;
 
     final response = await dio.post(
       endpoint,
@@ -76,37 +79,28 @@ class AuthServiceImp implements AuthService {
     fromJsonT(obj) => RegisterResultModel.fromJson(obj as Map<String, dynamic>);
     final result = ResponseModel.fromJson(json, fromJsonT);
 
-
     return result;
   }
-@override
-  Future<ResponseModel<AuthResultModel>> authenticate({
-    required String tenantName,
-    required String emailOrUserName,
-    required String password,
+
+  @override
+  Future<ResponseModel<AuthResultModel>> authenticate(
+    SignInModel model, {
     required String ianaTimeZone,
-    bool rememberClient = false,
   }) async {
     try {
       const endpoint = "/TokenAuth/Authenticate";
-
-      final payload = <String, dynamic>{
-        "tenantName": tenantName.trim(),
-        "userNameOrEmailAddress": emailOrUserName.trim(),
-        "password": password,
-        "rememberClient": rememberClient,
+      final map = model.toJson();
+      map.addAll({
         "returnUrl": null,
         "singleSignIn": false,
         "ianaTimeZone": ianaTimeZone,
-      };
+      });
 
-      final response = await dio.post(endpoint, data: payload);
+      final response = await dio.post(endpoint, data: map);
       final json = response.data as Map<String, dynamic>;
 
-      final result = ResponseModel.fromJson(
-        json,
-        (obj) => AuthResultModel.fromJson(obj as Map<String, dynamic>),
-      );
+      fromJsonT(json) => AuthResultModel.fromJson(json as Map<String, dynamic>);
+      final result = ResponseModel.fromJson(json, fromJsonT);
 
       await dio.setAuthToken(result.result.accessToken);
       await dio.setIanaTimeZone(ianaTimeZone);

@@ -17,3 +17,19 @@ class PasswordComplexityFail extends PasswordComplexityState {
 
   final String error;
 }
+
+// class PasswordValidationState extends PasswordComplexityState {
+//   final bool isValidLength;
+//   final bool isValidUpperCase;
+//   final bool isValidLowerCase;
+//   final bool isValidDigit;
+//   final bool isValidNonAlphanumeric;
+
+//   PasswordValidationState(
+//     this.isValidLength,
+//     this.isValidUpperCase,
+//     this.isValidLowerCase,
+//     this.isValidDigit,
+//     this.isValidNonAlphanumeric,
+//   );
+// }

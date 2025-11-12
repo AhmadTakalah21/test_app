@@ -11,11 +11,10 @@ class SignInModel {
     String? tenantName,
     String? userNameOrEmailAddress,
     String? password,
-    bool? rememberClient,
+    this.rememberClient = false,
   }) : _tenantName = tenantName,
        _userNameOrEmailAddress = userNameOrEmailAddress,
-       _password = password,
-       _rememberClient = rememberClient;
+       _password = password;
 
   factory SignInModel.fromString(String str) =>
       SignInModel.fromJson(jsonDecode(str) as Map<String, dynamic>);
@@ -26,7 +25,9 @@ class SignInModel {
   final String? _tenantName;
   final String? _userNameOrEmailAddress;
   final String? _password;
-  final bool? _rememberClient;
+
+  @JsonKey(name: 'rememberClient')
+  final bool rememberClient;
 
   @JsonKey(name: 'tenancyName')
   String get tenantName => _tenantName ?? '';
@@ -37,16 +38,13 @@ class SignInModel {
   @JsonKey(name: 'password')
   String get password => _password ?? '';
 
-  @JsonKey(name: 'rememberClient')
-  bool get rememberClient => _rememberClient ?? false;
-
   Map<String, dynamic> toJson() => _$SignInModelToJson(this);
 
   SignInModel copyWith({
     String? Function()? tenantName,
     String? Function()? userNameOrEmailAddress,
     String? Function()? password,
-    bool? Function()? rememberClient,
+    bool? rememberClient,
   }) {
     return SignInModel(
       tenantName: tenantName != null ? tenantName() : _tenantName,
@@ -54,9 +52,7 @@ class SignInModel {
           ? userNameOrEmailAddress()
           : _userNameOrEmailAddress,
       password: password != null ? password() : _password,
-      rememberClient: rememberClient != null
-          ? rememberClient()
-          : _rememberClient,
+      rememberClient: rememberClient ?? this.rememberClient,
     );
   }
 

@@ -17,18 +17,21 @@ part 'states/sign_in_state.dart';
 part 'states/current_login_info_state.dart';
 part 'states/editions_for_select_state.dart';
 part 'states/password_complexity_state.dart';
+//part 'states/password_validation_state.dart';
 part 'states/tenant_availability_state.dart';
 part 'states/register_state.dart';
 
 @injectable
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this.authService, this.authManagerBloc) : super(AuthInitial());
-
   final AuthService authService;
   final AuthManagerBloc? authManagerBloc;
 
   RegisterModel registerModel = const RegisterModel();
+   SignInModel signInModel = const SignInModel();
   String? timeZone;
+
+  int? requiredLength;
 
   void setAdminEmail(String email) {
     registerModel = registerModel.copyWith(adminEmailAddress: () => email);
@@ -42,8 +45,20 @@ class AuthCubit extends Cubit<AuthState> {
     registerModel = registerModel.copyWith(adminLastName: () => lastName);
   }
 
+  void setRequiredLength(int requiredLength) =>
+      this.requiredLength = requiredLength;
+
   void setAdminPassword(String password) {
     registerModel = registerModel.copyWith(adminPassword: () => password);
+    // emit(
+    //   PasswordValidationState(
+    //     Utils.validateLenght(password, requiredLength ?? 0),
+    //     Utils.validateUpperCase(password),
+    //     Utils.validateLowerCase(password),
+    //     Utils.validateDigits(password),
+    //     Utils.validateNonAlphanumeric(password),
+    //   ),
+    // );
   }
 
   void setCaptchaResponse(String? captcha) {
@@ -66,8 +81,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   void resetRegisterModel() => registerModel = const RegisterModel();
 
-  SignInModel signInModel = const SignInModel();
-
   void setSignInTenant(String tenant) {
     signInModel = signInModel.copyWith(tenantName: () => tenant);
   }
@@ -83,7 +96,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void setRememberClient(bool remember) {
-    signInModel = signInModel.copyWith(rememberClient: () => remember);
+    signInModel = signInModel.copyWith(rememberClient: remember);
   }
 
   void _normalizeTenantFields() {
@@ -247,11 +260,8 @@ class AuthCubit extends Cubit<AuthState> {
       if (isClosed) return;
 
       final auth = await authService.authenticate(
-        tenantName: signInModel.tenantName,
-        emailOrUserName: signInModel.userNameOrEmailAddress,
-        password: signInModel.password,
+        signInModel,
         ianaTimeZone: timeZone ?? 'UTC',
-        rememberClient: signInModel.rememberClient ?? false,
       );
 
       // authManagerBloc?.add(SignedIn(accessToken: auth.result.accessToken));
@@ -264,15 +274,15 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> registerAndSignIn() async {
-    await register();
-    if (state is! RegisterSuccess) return;
+  // Future<void> registerAndSignIn() async {
+  //   await register();
+  //   if (state is! RegisterSuccess) return;
 
-    setSignInTenant(registerModel.tenancyName);
-    setSignInEmailOrUser(registerModel.adminEmailAddress);
-    setSignInPassword(registerModel.adminPassword);
-    setRememberClient(true);
+  //   setSignInTenant(registerModel.tenancyName);
+  //   setSignInEmailOrUser(registerModel.adminEmailAddress);
+  //   setSignInPassword(registerModel.adminPassword);
+  //   setRememberClient(true);
 
-    await signIn();
-  }
+  //   await signIn();
+  // }
 }

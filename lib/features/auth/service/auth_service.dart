@@ -3,6 +3,7 @@ import 'package:appointments_app/features/auth/model/login_info_result_model/log
 import 'package:appointments_app/features/auth/model/password_strength_model/password_strength_model.dart';
 import 'package:appointments_app/features/auth/model/register_model/register_model.dart';
 import 'package:appointments_app/features/auth/model/register_result_model/register_result_model.dart';
+import 'package:appointments_app/features/auth/model/sign_in_model/sign_in_model.dart';
 import 'package:appointments_app/features/auth/model/tenant_availability_model/tenant_availability_model.dart';
 import 'package:appointments_app/global/dio/dio_client.dart';
 import 'package:appointments_app/global/models/response_model/response_model.dart';
@@ -38,18 +39,17 @@ abstract class AuthService {
   Future<ResponseModel<LoginInfoResultModel>> getCurrentLoginInfo();
   Future<ResponseModel<EditionsForSelectModel>> getEditionsForSelect();
   Future<ResponseModel<PasswordStrengthModel>> getPasswordComplexity();
-  Future<ResponseModel<TenantAvailabilityModel>> checkTenantAvailability(String name);
+  Future<ResponseModel<TenantAvailabilityModel>> checkTenantAvailability(
+    String name,
+  );
 
   Future<ResponseModel<RegisterResultModel>> register(
-      RegisterModel model, {
-        String? timeZone,
-      });
+    RegisterModel model, {
+    String? timeZone,
+  });
 
-  Future<ResponseModel<AuthResultModel>> authenticate({
-    required String tenantName,
-    required String emailOrUserName,
-    required String password,
+  Future<ResponseModel<AuthResultModel>> authenticate(
+    SignInModel model, {
     required String ianaTimeZone,
-    bool rememberClient = false,
   });
 }
