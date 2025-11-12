@@ -10,13 +10,13 @@ SignInModel _$SignInModelFromJson(Map<String, dynamic> json) => SignInModel(
       tenantName: json['tenancyName'] as String?,
       userNameOrEmailAddress: json['userNameOrEmailAddress'] as String?,
       password: json['password'] as String?,
-      rememberClient: json['rememberClient'] as bool?,
+      rememberClient: json['rememberClient'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$SignInModelToJson(SignInModel instance) =>
     <String, dynamic>{
+      'rememberClient': instance.rememberClient,
       'tenancyName': instance.tenantName,
       'userNameOrEmailAddress': instance.userNameOrEmailAddress,
       'password': instance.password,
-      'rememberClient': instance.rememberClient,
     };

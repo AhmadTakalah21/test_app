@@ -29,7 +29,7 @@ class MainTextField extends StatefulWidget {
     this.floatingLabelColor,
     this.hintStyle,
     this.borderRadius,
-    this.borderColor = AppColors.mainColorSecondary,
+    this.borderColor = AppColors.greyShade4,
     this.borderWidth = 1,
     this.outlineInputBorder,
     this.fillColor,
@@ -42,7 +42,7 @@ class MainTextField extends StatefulWidget {
     this.validator,
     this.maxLines,
     this.minLines = 1,
-    this.titleSize = 15,
+    this.titleSize = 14,
     this.titlePadding = AppConstants.padding0,
     this.titleHeight = 10,
     this.titleColor = AppColors.blackShade,
@@ -106,7 +106,7 @@ class MainTextField extends StatefulWidget {
 class _MainTextFieldState extends State<MainTextField> {
   late final bool _ownsController;
   late final TextEditingController _controller;
-  late Color? _floatingLabelColor = widget.floatingLabelColor;
+  late final Color? _floatingLabelColor = widget.floatingLabelColor;
 
   @override
   void initState() {
@@ -189,6 +189,7 @@ class _MainTextFieldState extends State<MainTextField> {
               style: TextStyle(
                 fontSize: widget.titleSize,
                 height: 1.24,
+                fontWeight: FontWeight.w600,
                 color: widget.titleColor,
               ),
             ),

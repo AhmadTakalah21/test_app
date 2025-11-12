@@ -6,8 +6,10 @@ import 'package:appointments_app/global/localization/supported_locales.dart';
 import 'package:appointments_app/global/router/app_router.dart';
 import 'package:appointments_app/global/utils/app_colors.dart';
 import 'package:appointments_app/global/utils/constants.dart';
+import 'package:appointments_app/global/widgets/loading_indicator.dart';
 import 'package:appointments_app/global/widgets/main_action_button.dart';
 import 'package:appointments_app/global/widgets/main_app_bar.dart';
+import 'package:appointments_app/global/widgets/main_error_widget.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
@@ -19,6 +21,7 @@ abstract class SignUpMethodsViewCallBacks {
   void onContinueWithGoogle();
   void onTermsOfServiceAndPrivacyPolicy();
   void onSignInTap();
+  void onTryAgainTap();
 }
 
 @RoutePage()
@@ -46,11 +49,20 @@ class _SignUpMethodsPageState extends State<SignUpMethodsPage>
   late final AuthCubit authCubit = context.read();
 
   @override
+  void initState() {
+    super.initState();
+    authCubit.getCurrentLoginInfo();
+  }
+
+  @override
   void onContinueWithEmail() =>
       context.router.push(SignUpWithEmailRoute(authCubit: authCubit));
 
   @override
   void onContinueWithGoogle() {}
+
+  @override
+  void onTryAgainTap() => authCubit.getCurrentLoginInfo();
 
   @override
   void onTermsOfServiceAndPrivacyPolicy() {
@@ -94,75 +106,104 @@ class _SignUpMethodsPageState extends State<SignUpMethodsPage>
         top: true,
         child: Padding(
           padding: AppConstants.padding16,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              AuthHeader(title: "create_account".tr()),
-              const Spacer(),
+          child: BlocConsumer<AuthCubit, AuthState>(
+            buildWhen: (previous, current) => current is CurrentLoginInfoState,
+            listener: (context, state) {
+              if (state is CurrentLoginInfoSuccess) {
+                final info = state.loginInfo;
+                if (info.user != null && info.tenant == null) {
+                  context.router.push(SignUpTenantRoute(authCubit: authCubit));
+                } else if (info.user != null && info.tenant != null) {
+                  context.router.push(SignUpSuccessRoute());
+                }
+              }
+            },
+            builder: (context, state) {
+              Widget? widget;
+              bool isLoading = state is CurrentLoginInfoLoading;
+              bool isError = state is CurrentLoginInfoFail;
+              bool enabled = state is CurrentLoginInfoSuccess;
+              if (isLoading) widget = LoadingIndicator();
+              if (isError) {
+                widget = MainErrorWidget(
+                  error: state.error,
+                  onTryAgainTap: onTryAgainTap,
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AuthHeader(title: "create_account".tr()),
+                  if (widget != null) ...[const Spacer(), widget],
+                  const Spacer(),
 
-              MainActionButton(
-                onPressed: onContinueWithGoogle,
-                buttonColor: AppColors.greyShade2,
-                textColor: AppColors.blackShade,
-                text: "continue_with_google".tr(),
-                iconAsset: AppConstants.googleIconSvg,
-              ),
+                  MainActionButton(
+                    onPressed: onContinueWithGoogle,
+                    buttonColor: AppColors.greyShade2,
+                    textColor: AppColors.blackShade,
+                    text: "continue_with_google".tr(),
+                    iconAsset: AppConstants.googleIconSvg,
+                    enabled: enabled,
+                  ),
 
-              const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-              Text(
-                "or".tr(),
-                style: const TextStyle(
-                  color: AppColors.greyShade,
-                  fontSize: 12,
-                  height: 1.16,
-                ),
-              ),
+                  Text(
+                    "or".tr(),
+                    style: const TextStyle(
+                      color: AppColors.greyShade,
+                      fontSize: 12,
+                      height: 1.16,
+                    ),
+                  ),
 
-              const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-              MainActionButton(
-                onPressed: onContinueWithEmail,
-                text: "continue_with_email".tr(),
-              ),
+                  MainActionButton(
+                    onPressed: onContinueWithEmail,
+                    text: "continue_with_email".tr(),
+                    enabled: enabled,
+                  ),
 
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              Padding(
-                padding: AppConstants.paddingH30,
-                child: Text.rich(
-                  TextSpan(
-                    text: "you_agree".tr(),
-                    children: [
+                  Padding(
+                    padding: AppConstants.paddingH30,
+                    child: Text.rich(
                       TextSpan(
-                        text: "terms_privacy".tr(),
-                        style: const TextStyle(
-                          decoration: TextDecoration.underline,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = onTermsOfServiceAndPrivacyPolicy,
+                        text: "you_agree".tr(),
+                        children: [
+                          TextSpan(
+                            text: "terms_privacy".tr(),
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = onTermsOfServiceAndPrivacyPolicy,
+                          ),
+                        ],
                       ),
-                    ],
+                      textAlign: TextAlign.center,
+                      strutStyle: const StrutStyle(height: 1.2),
+                      style: const TextStyle(
+                        color: AppColors.greyShade,
+                        fontSize: 13,
+                        height: 1.18,
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                  strutStyle: const StrutStyle(height: 1.2),
-                  style: const TextStyle(
-                    color: AppColors.greyShade,
-                    fontSize: 13,
-                    height: 1.18,
-                  ),
-                ),
-              ),
 
-              const Spacer(),
+                  const Spacer(),
 
-              _buildLanguageInlineSelector(),
+                  _buildLanguageInlineSelector(),
 
-              const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-              const AuthTail(),
-              const SizedBox(height: 20),
-            ],
+                  const AuthTail(),
+                  const SizedBox(height: 20),
+                ],
+              );
+            },
           ),
         ),
       ),
